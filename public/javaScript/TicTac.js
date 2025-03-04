@@ -1,16 +1,26 @@
 const socket = io();
 const cells = document.querySelectorAll(".cell");
+const messageDisplay = document.getElementById("message");
 const room = "room1";
 let currentPlayer = "X";
 let isGameOver = false;
 
 socket.emit("joinRoom", room);
 
-socket.on("startGame", () => {
-  alert("Game Started!");
+
+// waitingForOpponent listening frontend from the server 
+socket.on("waitingForOpponent", () => {
+  messageDisplay.innerText = "Waiting for opponent...";
 });
 
-// Add event listeners to all cells
+
+// startGame listening frontend from the server 
+socket.on("startGame", () => {
+  messageDisplay.innerText = "Game Started X goes first.";
+});
+
+
+
 cells.forEach((cell, index) => {
   cell.addEventListener("click", () => {
     if (!cell.innerText && !isGameOver) {
@@ -19,23 +29,27 @@ cells.forEach((cell, index) => {
   });
 });
 
-// Listen for updates from the server
 socket.on("updateBoard", ({ index, symbol }) => {
   cells[index].innerText = symbol;
   currentPlayer = symbol === "X" ? "O" : "X";
-});
 
-// Handle game over (win or tie)
-socket.on("gameOver", ({ winner }) => {
-  isGameOver = true;
-  if (winner === "Tie") {
-    alert("It's a tie!");
-  } else {
-    alert(`${winner} wins!`);
+  // Update message to show whose turn it is
+  if (!isGameOver) {
+    messageDisplay.innerText = `Player ${currentPlayer}'s Turn`;
   }
 });
 
-// Restart button logic
+
+socket.on("gameOver", ({ winner }) => {
+  isGameOver = true;
+  messageDisplay.innerText = winner === "Tie" ? "It's a tie!" : `${winner} wins!`;
+});
+
+socket.on("opponentDisconnected", () => {
+  isGameOver = true;
+  messageDisplay.innerText = "Opponent disconnected, waiting...";
+});
+
 document.getElementById("reset").addEventListener("click", () => {
   socket.emit("resetGame", room);
 });
@@ -43,4 +57,5 @@ document.getElementById("reset").addEventListener("click", () => {
 socket.on("gameReset", () => {
   isGameOver = false;
   cells.forEach(cell => (cell.innerText = ""));
+  messageDisplay.innerText = "Game restarted!";
 });
