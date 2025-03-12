@@ -9,24 +9,22 @@ export default function Socketio(io) {
         rooms[room] = { players: [], board: Array(9).fill(null) };
       }
 
-       // here the user id push in the rooms object  
+       
       if (rooms[room].players.length < 2) {
         rooms[room].players.push(socket.id);
         socket.join(room);
 
 
-        // cross check if there is the one players comes than
-        // they server send the message to the frontend 
+      
         if (rooms[room].players.length === 1) {
-          io.to(room).emit("waitingForOpponent"); // Notify first player to wait
+          io.to(room).emit("waitingForOpponent"); 
         }
 
 
         // if there is 2 players than start the game
         // otherwise it see the waitingfor the opponent
         if (rooms[room].players.length === 2) {
-          io.to(room).emit("startGame"); // Start game when two players are connected
-        }
+          io.to(room).emit("startGame");         }
       }
     });
 
@@ -37,7 +35,7 @@ export default function Socketio(io) {
     
       const winner = checkWinner(rooms[room].board);
     
-      // Ensure we check for a winner before a tie
+      //  check for a winner before a tie
       if (winner) {
         io.to(room).emit("gameOver", { winner });
         rooms[room].board = Array(9).fill(null); 
@@ -64,7 +62,7 @@ export default function Socketio(io) {
         rooms[room].players = rooms[room].players.filter((id) => id !== socket.id);
         
         if (rooms[room].players.length === 1) {
-          io.to(room).emit("opponentDisconnected"); // Notify remaining player
+          io.to(room).emit("opponentDisconnected"); 
         }
       }
     });
@@ -80,7 +78,7 @@ export default function Socketio(io) {
     for (let pattern of winningPatterns) {
       const [a, b, c] = pattern;
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a]; // Return 'X' or 'O' as winner
+        return board[a];
       }
     }
     return null;

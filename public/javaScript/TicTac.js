@@ -8,13 +8,11 @@ let isGameOver = false;
 socket.emit("joinRoom", room);
 
 
-// waitingForOpponent listening frontend from the server 
 socket.on("waitingForOpponent", () => {
   messageDisplay.innerText = "Waiting for opponent...";
 });
 
 
-// startGame listening frontend from the server 
 socket.on("startGame", () => {
   messageDisplay.innerText = "Game Started X goes first.";
 });
@@ -31,9 +29,9 @@ cells.forEach((cell, index) => {
 
 socket.on("updateBoard", ({ index, symbol }) => {
   cells[index].innerText = symbol;
-  currentPlayer = symbol === "X" ? "O" : "X";
+  currentPlayer = symbol === "X" ? "O" : "X" ;
 
-  // Update message to show whose turn it is
+  // Update message to show Whose turn it is
   if (!isGameOver) {
     messageDisplay.innerText = `Player ${currentPlayer}'s Turn`;
   }

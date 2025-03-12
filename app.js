@@ -4,7 +4,7 @@ import path from "path";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import Scoketio from "./socket.js"; // Ensure correct import
+import Scoketio from "./socket.js";
 
 const app = express();
 const server = createServer(app);
@@ -16,7 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.static(path.join(__dirname, "public")));
 
-Scoketio(io); // Initialize socket handling
+Scoketio(io); 
 
 app.get("/", (req, res) => {
   res.render("Tic-tac-toe");
